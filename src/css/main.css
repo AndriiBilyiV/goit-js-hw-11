@@ -15,8 +15,13 @@ body {
   background-color: var(--snow-cloud);
   user-select: none;
 }
+a {
+  text-decoration: none;
+  color: black;
+}
 .header {
   position: fixed;
+  z-index: 1000;
   width: 100%;
   padding: 24 0 24;
   background-color: var(--glacier);
@@ -61,4 +66,30 @@ body {
 .btn:focus {
   fill: var(--snow-cloud);
   transition: fill 500ms cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.gallery {
+  padding-top: 140px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  column-gap: 24px;
+  row-gap: 36px;
+}
+.photo-card {
+  max-width: 360px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+.image-thumb {
+  height: 240px;
+  width: 360px;
+  overflow: hidden;
+}
+.img {
+  max-width: 100%;
+}
+.info {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
 }
