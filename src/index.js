@@ -23,9 +23,17 @@ const pix = 'https://pixabay.com/api/';
 const gallery = document.querySelector('.gallery-js')
 const input = document.querySelector('.input-js');
 const btn = document.querySelector('.btn-js');
+const viewportEnd = document.querySelector('.scroll-point-js')
 
 let totalHits = 0;
 let page = 1;
+
+const scrollOptions = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 1
+};
+
 
 btn.addEventListener('click', evt => search(evt, input.value))
 
@@ -46,20 +54,17 @@ async function search(listenerEvent, value) {
     })
     .catch(err => Notiflix.Notify.failure(err.message))
   modal.refresh();
-  scrollDown()
-  document.addEventListener('scroll', scrollListener)
+  scrollDown();
+  const listener = new IntersectionObserver(onScrollEnd, scrollOptions)
+  listener.observe(viewportEnd)
 }
 
 // Load more by indefinitely scroll
 
-async function scrollListener() {
-    const yPosition = window.scrollY;
-    const windowHight = window.screen.height;
-    const galleryHight = gallery.scrollHeight;
-    
-    if (yPosition > (galleryHight - windowHight - 1000)) {
-      document.removeEventListener('scroll', scrollListener);
-      page += 1;
+
+async function onScrollEnd(ent, obs) {
+  if (ent[0].intersectionRatio > 0) {
+    page += 1;
       options.params.page = page;
       if (gallery.childElementCount >= totalHits) {
         Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
@@ -69,10 +74,11 @@ async function scrollListener() {
         .then(resp => 
           renderCards(gallery, resp.data))
         .catch(err => Notiflix.Notify.failure(err.message))
-      modal.refresh();
-      document.addEventListener('scroll', scrollListener)
-    }
+  modal.refresh();}
 }
+
+
+
 
 // Element render functions
 
@@ -120,7 +126,32 @@ function scrollDown() {
   .firstElementChild.getBoundingClientRect();
 
 window.scrollBy({
-  top: cardHeight * 2,
+  top: cardHeight,
   behavior: "smooth",
 });
 }
+
+
+// Infinitely onEventScroll _backup
+
+// async function scrollListener() {
+//     const yPosition = window.scrollY;
+//     const windowHight = window.screen.height;
+//     const galleryHight = gallery.scrollHeight;
+    
+//     if (yPosition > (galleryHight - windowHight - 1000)) {
+//       document.removeEventListener('scroll', scrollListener);
+//       page += 1;
+//       options.params.page = page;
+//       if (gallery.childElementCount >= totalHits) {
+//         Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+//         return
+//       }
+//       await axios.get(pix, options)
+//         .then(resp => 
+//           renderCards(gallery, resp.data))
+//         .catch(err => Notiflix.Notify.failure(err.message))
+//       modal.refresh();
+//       document.addEventListener('scroll', scrollListener)
+//     }
+// }
